@@ -8,6 +8,11 @@ from io import BytesIO
 from PIL import Image
 
 app = FastAPI()
+from fastapi.responses import Response
+
+@app.head("/")
+async def head_root():
+    return Response(status_code=200)
 
 templates = Jinja2Templates(directory="templates")
 
