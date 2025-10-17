@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Enhancement</title>
+  <style>
+    body { font-family: Arial; text-align: center; background: #fafafa; }
+    .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px; }
+    img { width: 240px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+    h3 { margin: 5px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Image Enhancement Demo</h1>
+  <form action="/process" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/*" required>
+    <button type="submit">Process</button>
+  </form>
+
+  {% if original %}
+  <h2>Original & Noisy Images</h2>
+  <div class="grid">
+    <div><h3>Original</h3><img src="data:image/png;base64,{{ original }}"></div>
+    <div><h3>Gaussian Noise</h3><img src="data:image/png;base64,{{ noisy_gaussian }}"></div>
+    <div><h3>Salt & Pepper</h3><img src="data:image/png;base64,{{ noisy_sp }}"></div>
+    <div><h3>Speckle Noise</h3><img src="data:image/png;base64,{{ noisy_speckle }}"></div>
+  </div>
+
+  <h2>Smoothing Filters</h2>
+  <div class="grid">
+    <div><h3>Mean</h3><img src="data:image/png;base64,{{ mean_smooth }}"></div>
+    <div><h3>Gaussian</h3><img src="data:image/png;base64,{{ gaussian_smooth }}"></div>
+    <div><h3>Median</h3><img src="data:image/png;base64,{{ median_smooth }}"></div>
+    <div><h3>Bilateral</h3><img src="data:image/png;base64,{{ bilateral_smooth }}"></div>
+  </div>
+
+  <h2>Sharpen & Edge Detection</h2>
+  <div class="grid">
+    <div><h3>Sharpened</h3><img src="data:image/png;base64,{{ sharpened }}"></div>
+    <div><h3>Sobel</h3><img src="data:image/png;base64,{{ sobel }}"></div>
+    <div><h3>Prewitt</h3><img src="data:image/png;base64,{{ prewitt }}"></div>
+    <div><h3>Canny</h3><img src="data:image/png;base64,{{ canny }}"></div>
+  </div>
+  {% endif %}
+</body>
+</html>

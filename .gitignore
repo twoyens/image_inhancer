@@ -1,0 +1,28 @@
+# Bỏ qua môi trường ảo Python
+cs406/
+venv/
+env/
+.venv/
+
+# Bỏ cache của Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Bỏ các file tạm và log
+*.log
+*.tmp
+
+# Bỏ file hệ thống
+.DS_Store
+Thumbs.db
+
+# Bỏ file cấu hình IDE
+.vscode/
+.idea/
+
+# Bỏ dataset hoặc file lớn (nếu có)
+data/
+datasets/
+uploads/
