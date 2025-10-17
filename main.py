@@ -8,12 +8,6 @@ from io import BytesIO
 from PIL import Image
 
 app = FastAPI()
-from fastapi.responses import Response
-
-@app.head("/")
-async def head_root():
-    return Response(status_code=200)
-
 templates = Jinja2Templates(directory="templates")
 
 # --------------------------
@@ -22,6 +16,17 @@ templates = Jinja2Templates(directory="templates")
 def to_base64(img):
     _, buffer = cv2.imencode('.png', img)
     return base64.b64encode(buffer).decode('utf-8')
+
+# --------------------------
+# Helper: Resize image (max 512px)
+# --------------------------
+def resize_image(img, max_size=512):
+    h, w = img.shape[:2]
+    if max(h, w) > max_size:
+        scale = max_size / max(h, w)
+        new_w, new_h = int(w * scale), int(h * scale)
+        img = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    return img
 
 # --------------------------
 # Helper: Add Noise
@@ -77,6 +82,7 @@ async def process_image(request: Request, file: UploadFile = File(...)):
     contents = await file.read()
     img = np.array(Image.open(BytesIO(contents)).convert("RGB"))
     img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    img_bgr = resize_image(img_bgr)  # ✅ giảm kích thước
 
     # ---------------------- Add Noise ----------------------
     noisy_gaussian = add_gaussian_noise(img_bgr)
@@ -102,20 +108,15 @@ async def process_image(request: Request, file: UploadFile = File(...)):
 
     return templates.TemplateResponse("index.html", {
         "request": request,
-        # Original
         "original": to_base64(img_bgr),
-        # Noisy
         "noisy_gaussian": to_base64(noisy_gaussian),
         "noisy_sp": to_base64(noisy_sp),
         "noisy_speckle": to_base64(noisy_speckle),
-        # Smoothing
         "mean_smooth": to_base64(mean_smooth),
         "gaussian_smooth": to_base64(gaussian_smooth),
         "median_smooth": to_base64(median_smooth),
         "bilateral_smooth": to_base64(bilateral_smooth),
-        # Sharpen
         "sharpened": to_base64(sharpened),
-        # Edge
         "sobel": to_base64(sobel),
         "prewitt": to_base64(prewitt),
         "canny": to_base64(canny)
